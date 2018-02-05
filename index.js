@@ -3,6 +3,7 @@ var makeMiddleware = require('./lib/make-middleware')
 
 var diskStorage = require('./storage/disk')
 var memoryStorage = require('./storage/memory')
+var s3Storage = require('./storage/s3')
 
 function allowAll (req, file, cb) {
   cb(null, true)
@@ -11,6 +12,8 @@ function allowAll (req, file, cb) {
 function Multer (options) {
   if (options.storage) {
     this.storage = options.storage
+  } else if (options.dest && options.storageType == 's3') {
+    this.storage = s3Storage({ destination: options.dest })
   } else if (options.dest) {
     this.storage = diskStorage({ destination: options.dest })
   } else {
@@ -101,3 +104,4 @@ function multer (options) {
 module.exports = multer
 module.exports.diskStorage = diskStorage
 module.exports.memoryStorage = memoryStorage
+module.exports.s3Storage = s3Storage
